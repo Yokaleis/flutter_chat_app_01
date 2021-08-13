@@ -1,7 +1,9 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_chat_01/widgets/chat_message.dart';
 
 
 class ChatPage extends StatefulWidget {
@@ -10,10 +12,16 @@ class ChatPage extends StatefulWidget {
   _ChatPageState createState() => _ChatPageState();
 }
 
-class _ChatPageState extends State<ChatPage> {
+class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   final _textController = new TextEditingController();
   final _focusNode      = new FocusNode();
+
+  List<ChatMessage> _message = [
+    
+  ];
+
+  bool _enviandomensaje = false;
 
   @override
   Widget build(BuildContext context) {
@@ -38,8 +46,8 @@ class _ChatPageState extends State<ChatPage> {
             Flexible(
               child: ListView.builder(
                 physics: BouncingScrollPhysics(),
-                //itemCount: 1,
-                itemBuilder: (_, i) => Text('$i'),
+                itemCount: _message.length,
+                itemBuilder: (_, i) => _message[i],
                 reverse: true,
               ),),
 
@@ -63,9 +71,16 @@ class _ChatPageState extends State<ChatPage> {
             Flexible(
               child: TextField(
                 controller: _textController,
-                onSubmitted: (_){},
+                onSubmitted: _handleSubmit,
                 onChanged: (String texto){
                   //Saber cuando alguien esta escribiendo
+                  setState(() {
+                    if( texto.trim().length > 0){
+                      _enviandomensaje = true;
+                    }else{
+                      _enviandomensaje = false;
+                    }
+                  });
                 },
                 decoration: InputDecoration.collapsed(
                   hintText: 'Escribe tu mensaje'
@@ -79,11 +94,21 @@ class _ChatPageState extends State<ChatPage> {
               child: Platform.isIOS
               ? CupertinoButton(
                 child: Text('Enviar'), 
-                onPressed: (){},
+                onPressed: _enviandomensaje ? () => _handleSubmit( _textController.text.trim()) : null,
                 )
                 :
+                //BOTON ANDROID
                 Container(
-                  margin: EdgeInsets.symmetric(horizontal: 4.0),
+                  margin: EdgeInsets.symmetric(horizontal: 2.0),
+                  child: IconTheme(
+                    data: IconThemeData(color: Colors.pinkAccent),
+                    child: IconButton(
+                      highlightColor: Colors.transparent,
+                      splashColor: Colors.transparent,
+                      icon: Icon(Icons.send),
+                      onPressed: _enviandomensaje ? () => _handleSubmit( _textController.text.trim()) : null,
+                    ),
+                  ),
                 )
             )
           ],
@@ -91,4 +116,45 @@ class _ChatPageState extends State<ChatPage> {
       )
       );
   }
+
+  _handleSubmit(String texto){
+    
+    //Validacion para no enviar mensajes vacios
+    if(texto.length == 0) return;
+
+
+    print(texto);
+    _focusNode.requestFocus();
+    _textController.clear();
+
+    final newMessage = new ChatMessage( 
+      uid: '123', 
+      texto: texto,
+      animationController: AnimationController(vsync: this, duration: Duration(milliseconds: 400),
+      ),
+      );
+    _message.insert(0, newMessage);
+    newMessage.animationController.forward();//Dispara el proceso de animacion.
+
+
+    setState(() {
+          _enviandomensaje = false;
+        });
+
+  }
+
+  //DISPOSE
+
+  //CANCELAR LA ESCUCHA DEL SOCKET EN UN CHAT EN PARTICULAR
+
+  
+  @override void dispose(){
+
+    for( ChatMessage message in _message ){
+      message.animationController.dispose();
+    }
+    super.dispose();
+  }
+
+
 }
