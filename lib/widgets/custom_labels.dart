@@ -7,10 +7,10 @@ class Labels extends StatelessWidget {
   final String subtitulo;
 
   const Labels({
-    Key key, 
-    @required this.ruta,
-    @required this.titulo,
-    @required this.subtitulo,
+    Key? key, 
+    required this.ruta,
+    required this.titulo,
+    required this.subtitulo,
   }) : super(key: key);
 
 
@@ -31,7 +31,7 @@ class Labels extends StatelessWidget {
             child: Text(this.subtitulo, 
             style: TextStyle(
               fontSize: 18, 
-              color: Color(0xff3A0CA3),
+              color: Color(0xffffcb5a),
               fontWeight: FontWeight.bold,
               ),
               ),

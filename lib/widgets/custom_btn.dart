@@ -6,9 +6,9 @@ class Boton extends StatelessWidget {
   final Function onPressed;
 
   const Boton({
-    Key key, 
-    @required this.text, 
-    @required this.onPressed
+    Key? key, 
+    required this.text, 
+    required this.onPressed
   }) : super(key: key);
 
 
@@ -23,7 +23,7 @@ class Boton extends StatelessWidget {
                 fontWeight: FontWeight.w400
               )
             ),
-            onPressed: this.onPressed,
+            onPressed: () => this.onPressed,
             child: Container(
               width: double.infinity,
               height: 55,

@@ -1,4 +1,4 @@
-import 'dart:ffi';
+
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -147,7 +147,7 @@ class _ChatPageState extends State<ChatPage> with TickerProviderStateMixin {
 
   //CANCELAR LA ESCUCHA DEL SOCKET EN UN CHAT EN PARTICULAR
 
-  
+
   @override void dispose(){
 
     for( ChatMessage message in _message ){
